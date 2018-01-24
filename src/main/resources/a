@@ -1,0 +1,29 @@
+@RequestMapping("/session")
+    @ResponseBody
+    public void getSession(){
+        EnterpriseCacheSessionDAO sessionDao=new EnterpriseCacheSessionDAO();
+
+        Collection<Session> sessions = sessionDao.getActiveSessions();
+        System.out.println("执行查找session"+sessions.toString());
+        for(Session session:sessions){
+            String s=String.valueOf(session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY));//获得session中已经登录用户的名字
+            JSONObject object=JSONObject.parseObject(s);
+            System.out.println("session:"+object.toJSONString());
+            if(null!=object) {
+                try {
+                    if (null != object.getString("nickname")) {
+                        String loginUsername = object.getString("nickname");
+                        System.out.println("登录名为："+loginUsername);
+                        /*
+                        if (utoken.getUsername().equals(loginUsername)) {
+                            System.out.println(loginUsername + "已经登录,不能再次登录");
+                            user = null;
+                        }
+                        */
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
